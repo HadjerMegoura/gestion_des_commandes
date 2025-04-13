@@ -1,0 +1,29 @@
+.container  {
+    display: grid;
+    place-items: center;
+    gap: 50px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    gap: 5px;
+    align-items: center;
+    width: 100%;
+
+}
+
+.table {
+    width: 100%;
+}
+
+.mat-cell, .mat-header-cell {
+    text-align: center;
+  }
+
+mat-toolbar {
+    display: flex;
+    gap: 20px;
+    justify-content: flex-end;
+  }

@@ -1,0 +1,118 @@
+<div class="container">
+  <mat-toolbar>
+    <mat-icon (click)="addBtnClicked()">add</mat-icon>
+    <mat-form-field style="width: 150px; height: inherit">
+      <mat-label>status</mat-label>
+      <mat-select (selectionChange)="filterByStatus($event.value)">
+        <mat-option>None</mat-option>
+        @for (stat of status; track stat) {
+        <mat-option [value]="stat">{{ stat }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <span>Total : {{ nmbrTotalCmds$ | async }}</span>
+  </mat-toolbar>
+
+  <div *ngIf="commandes$ | async as commandes">
+    <h1 *ngIf="commandes.length == 0 && !addFormBtn">No Commandes</h1>
+  </div>
+
+  <div *ngIf="commandes$ | async as commandes" class="table">
+    <table
+      mat-table
+      [dataSource]="commandes$ | async"
+      class="mat-elevation-z8"
+      *ngIf="!addFormBtn && commandes.length > 0"
+    >
+      <!-- Product Column -->
+      <ng-container matColumnDef="product">
+        <th mat-header-cell *matHeaderCellDef>Produit</th>
+        <td mat-cell *matCellDef="let cmd">
+          {{ getProductName(cmd.product_id) }}
+        </td>
+      </ng-container>
+
+      <!-- Quantity Column -->
+      <ng-container matColumnDef="quantity">
+        <th mat-header-cell *matHeaderCellDef>Quantité</th>
+        <td mat-cell *matCellDef="let cmd">{{ cmd.quantity }}</td>
+      </ng-container>
+
+      <!-- Status Column -->
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let cmd">{{ cmd.status }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+        <td mat-cell *matCellDef="let cmd">
+          <button mat-flat-button color="warn" (click)="deleteCommande(cmd.id)">
+            Delete
+          </button>
+        </td>
+      </ng-container>
+
+      <tr
+        mat-header-row
+        *matHeaderRowDef="['product', 'quantity', 'status', 'actions']"
+      ></tr>
+      <tr
+        mat-row
+        *matRowDef="
+          let row;
+          columns: ['product', 'quantity', 'status', 'actions']
+        "
+      ></tr>
+    </table>
+  </div>
+  <div class="addCommand">
+    <form
+      (ngSubmit)="addCommande(commandForm)"
+      #commandForm="ngForm"
+      *ngIf="addFormBtn"
+    >
+      <mat-form-field>
+        <mat-label>produit</mat-label>
+        <mat-select name="product" [(ngModel)]="commande.product_id" required>
+          <mat-option
+            *ngFor="let product of AvailableProducts"
+            [value]="product.id"
+            >{{ product.name }}</mat-option
+          >
+        </mat-select>
+      </mat-form-field>
+      <span
+        style="color: red"
+        *ngIf="
+          commandForm.controls['product']?.invalid &&
+          commandForm.controls['product']?.touched
+        "
+      >
+        Veuillez choisir un produit
+      </span>
+
+      <mat-form-field>
+        <mat-label>quantité</mat-label>
+        <input
+          matInput
+          type="number"
+          min="1"
+          name="quantity"
+          [max]="getProductQntinStock(commande.product_id)"
+          value="1"
+          [(ngModel)]="commande.quantity"
+          [disabled]="getProductQntinStock(commande.product_id) === 0"
+        />
+      </mat-form-field>
+      <button
+        mat-flat-button
+        type="submit"
+        style="background-color: blueviolet"
+      >
+        Ajouter Commande
+      </button>
+    </form>
+  </div>
+</div>
