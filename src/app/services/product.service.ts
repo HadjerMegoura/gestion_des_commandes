@@ -58,8 +58,5 @@ export class ProductService {
     if (product) {
       product.quantityInStock = product.quantityInStock - quantity;
     }
-    console.log(
-      this.listProducts.find((pro) => pro.id === pro_id).quantityInStock
-    );
   }
 }
