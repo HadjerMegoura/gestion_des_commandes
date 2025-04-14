@@ -45,8 +45,7 @@ export class ProductService {
   }
 
   getProductNameById(pro_id: string): string {
-    const product = this.listProducts.find((pro) => pro.id === pro_id);
-    return product ? product.name : 'Unknown';
+    return this.listProducts.find((pro) => pro.id === pro_id).name;
   }
 
   getListProduct() {

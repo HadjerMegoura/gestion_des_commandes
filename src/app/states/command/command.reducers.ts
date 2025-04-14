@@ -10,10 +10,12 @@ import {
 
 export interface CommandState {
   listCommandes: Commande[];
+  error: any;
 }
 
 export const initializeCommandeState: CommandState = {
   listCommandes: [],
+  error: null,
 };
 
 export const commandReducer = createReducer(
@@ -36,7 +38,7 @@ export const commandReducer = createReducer(
   // When we get the commandes list from the API
   on(getListCommandsSuccess, (state, { commandes }) => ({
     ...state,
-    commandes,
+    listCommandes: commandes,
     error: null,
   })),
 
