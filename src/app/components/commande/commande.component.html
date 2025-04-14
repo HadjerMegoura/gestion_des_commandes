@@ -68,11 +68,7 @@
     </table>
   </div>
   <div class="addCommand">
-    <form
-      (ngSubmit)="addCommande(commandForm)"
-      #commandForm="ngForm"
-      *ngIf="addFormBtn"
-    >
+    <form (ngSubmit)="addCommande()" #commandForm="ngForm" *ngIf="addFormBtn">
       <mat-form-field>
         <mat-label>produit</mat-label>
         <mat-select name="product" [(ngModel)]="commande.product_id" required>
@@ -104,8 +100,15 @@
           value="1"
           [(ngModel)]="commande.quantity"
           [disabled]="getProductQntinStock(commande.product_id) === 0"
+          required
         />
       </mat-form-field>
+      <span
+        style="color: red"
+        *ngIf="getProductQntinStock(commande.product_id) === 0"
+      >
+        produit non disponible
+      </span>
       <button
         mat-flat-button
         type="submit"

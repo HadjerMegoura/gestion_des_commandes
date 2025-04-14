@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { CommandeService } from '../../services/commande.service';
 import { Commande } from '../../models/command';
 import { map, Observable } from 'rxjs';
@@ -37,6 +37,8 @@ export class CommandeComponent implements OnInit {
   productService = inject(ProductService);
   AvailableProducts: Product[] = this.productService.getListProduct();
 
+  @ViewChild('commandForm') form: NgForm;
+
   ngOnInit() {
     this.getAllCommandes();
     this.commandes$ = this.commandeService.commandBehavSubjectObser;
@@ -55,16 +57,19 @@ export class CommandeComponent implements OnInit {
    * @param {Commande} command
    */
 
-  addCommande(form: NgForm) {
-    if (form.touched && form.valid) {
+  addCommande() {
+    let productOutOfStock = !(
+      this.productService.getQuantityInStock(this.commande.product_id) > 0
+    );
+    if (this.form.touched && this.form.valid && !productOutOfStock) {
+      console.log(this.commande.quantity);
       this.store.dispatch(addCommand({ cmd: { ...this.commande } }));
       //updater le stock aprés insertion du commande
       this.productService.productOrdered(
         this.commande.product_id,
         this.commande.quantity
       );
-      this.addFormBtn = false;
-      form.reset({ quantity: 1 });
+      this.addBtnClicked();
     }
   }
   /**
@@ -80,6 +85,7 @@ export class CommandeComponent implements OnInit {
    */
   addBtnClicked() {
     this.addFormBtn = !this.addFormBtn;
+    this.form.reset();
   }
 
   /**
